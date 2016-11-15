@@ -86,6 +86,7 @@
 
                         for (const bacteria of matrix.values()) {
                             for (const compound of bacteria.values()) {
+                                if (!compound.resistanceDefault) compound.resistanceDefault = compound.classResistanceDefault;
                                 this.matrix.push(compound);
                             }
                         }

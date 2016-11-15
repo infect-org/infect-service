@@ -74,6 +74,7 @@
                         , name              : compound.substance.map(s => s.substanceLocale.filter(l => l.id_locale === 1).map(l => l.name)).map(l => l.length ? l[0] : null).filter(l => !!l).join(' / ')
                         , substances        : substances
                         , substanceClasses  : substanceClasses
+                        , id                : compound.id
                     }
                 });
 
