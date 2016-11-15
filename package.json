@@ -17,6 +17,7 @@
     }
     , "dependencies": {
           "ee-types"                    : "2.x"
+        , "ee-log"                      : "0.3.x"
         , "related"                     : "2.x"
         , "related-timestamps"          : "2.x"
         , "related-localization"        : "2.x"
