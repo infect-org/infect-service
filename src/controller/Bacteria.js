@@ -54,7 +54,7 @@
                         , id_shape              : bacteria.id_shape
                         , id_species            : bacteria.id_species
                         , localeNames           : bacteria.bacteriaLocale ? bacteria.bacteriaLocale.filter(l => l.id_locale === 1).map(g => ({id_language: 1, language: 'de', name: g.name})) : []
-                        , name                  : `${bacteria.species.genus.name} / ${bacteria.species.name.replace(bacteria.species.genus.name, '')}`.replace(/\s{2,}/, ' ')
+                        , name                  : `${bacteria.species.genus.name} ${bacteria.species.name.replace(bacteria.species.genus.name, '')}`.replace(/\s{2,}/, ' ')
                         , selectedLanguage      : 'de'
                         , selectedLanguageId    : 1
                         , shape                 : bacteria.shape ? bacteria.shape.shapeLocale.filter(l => l.id_locale === 1).map(l => l.name).reduce((l, p) => {return l ? l : p}, '') : ''
