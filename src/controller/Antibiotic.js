@@ -36,7 +36,8 @@
                 .getSubstanceClass('*')
                 .fetchSubstanceClassLocale('*').find().then((compounds) => {
 
-                const data = compounds.map((compound) => {
+
+                return Promise.all(compounds.map((compound) => {
 
                     // get substances
                     const substances = [];
@@ -51,10 +52,24 @@
                         });
                     });
 
-                    // classes
-                    const substanceClasses = [];
-                    compound.substance.forEach((substance) => {
-                        substance.substanceClass.forEach((substanceClass) => {
+
+                    // collect the substance classes
+                    const classes = new Set();
+                    compound.substance.forEach(substance => substance.substanceClass.forEach(substanceClass => classes.add(substanceClass)));
+
+                    return Promise.all(Array.from(classes.values()).map((substanceClass) => {
+                        // get all parent substabce classes too since this is used for the filter
+                        return this.db.substanceClass('*', {
+                              left: this.Related.lt(substanceClass.left)
+                            , right: this.Related.gt(substanceClass.right)
+                        }).fetchSubstanceClassLocale('*').find().then((parentClasses) => {
+                            parentClasses.forEach(cls => classes.add(cls));
+                        });
+                    })).then(() => {
+                        const substanceClasses = [];
+
+                        // nice, we got all classes
+                        Array.from(classes.values()).forEach((substanceClass) => {
                             substanceClass.substanceClassLocale.forEach((locale) => {
                                 substanceClasses.push({
                                       id            : locale.id_substanceClass
@@ -64,23 +79,24 @@
                                 });
                             });
                         });
+
+
+                        const substances = compound.substance.map(s => s.substanceLocale.filter(l => l.id_locale === 1).map(l => l.name)).map(l => l.length ? l[0] : null).filter(l => !!l);
+                        substances.sort();
+                        
+                        return Promise.resolve({
+                              po                : compound.perOs
+                            , iv                : compound.intraVenous
+                            , languagae         : 'de'
+                            , id_language       : 1
+                            , name              : substances.join(' / ')
+                            , substances        : substances
+                            , substanceClasses  : substanceClasses
+                            , id                : compound.id
+                        });
                     });
-
-                    return {
-                          po                : compound.perOs
-                        , iv                : compound.intraVenous
-                        , languagae         : 'de'
-                        , id_language       : 1
-                        , name              : compound.substance.map(s => s.substanceLocale.filter(l => l.id_locale === 1).map(l => l.name)).map(l => l.length ? l[0] : null).filter(l => !!l).join(' / ')
-                        , substances        : substances
-                        , substanceClasses  : substanceClasses
-                        , id                : compound.id
-                    }
-                });
-
-
-                response.ok(data);
-            }).catch(err => response.error('db_error', `Failed to load the antibiotics!`, err));
+                })).then(data => response.ok(data));                
+            }).catch(err => log(err));//response.error('db_error', `Failed to load the antibiotics!`, err));
         }
     }
 })();
