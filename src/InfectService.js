@@ -14,10 +14,6 @@
 
 
 
-    const AntibioticController = require('./controller/Antibiotic');
-    const BacteriaController = require('./controller/Bacteria');
-    const DiagnosisController = require('./controller/Diagnosis');
-    const ResistanceController = require('./controller/Resistance');
 
 
 
@@ -41,6 +37,38 @@
             // db conectivity
             this.related = new Related(options.db);
             this.related.use(new Timestamps());
+
+
+
+            this.autoLoad('bacteria');
+            this.autoLoad('city');
+            this.autoLoad('classResistance');
+            this.autoLoad('compound');
+            this.autoLoad('country_language');
+            this.autoLoad('dataSource');
+            this.autoLoad('diagnosis');
+            this.autoLoad('diagnosis_bacteria');
+            this.autoLoad('drug');
+            this.autoLoad('gender');
+            this.autoLoad('genus');
+            this.autoLoad('grouping');
+            this.autoLoad('organ');
+            this.autoLoad('organGroup');
+            this.autoLoad('region');
+            this.autoLoad('region_city');
+            this.autoLoad('resistanceLevel');
+            this.autoLoad('resistanceSample');
+            this.autoLoad('sex');
+            this.autoLoad('shape');
+            this.autoLoad('species');
+            this.autoLoad('substance');
+            this.autoLoad('substance_compound');
+            this.autoLoad('substance_substanceClass');
+            this.autoLoad('substanceClass');
+            this.autoLoad('tenant');
+            this.autoLoad('therapy');
+            this.autoLoad('therapy_compound');
+            this.autoLoad('topic');
         }
 
 
@@ -68,21 +96,6 @@
 
                 return Promise.resolve();
             });
-        }
-
-
-
-
-
-
-        afterLoad() {
-
-            this.registerResource(new AntibioticController(this.resourceControllerOptions));
-            this.registerResource(new BacteriaController(this.resourceControllerOptions));
-            this.registerResource(new DiagnosisController(this.resourceControllerOptions));
-            this.registerResource(new ResistanceController(this.resourceControllerOptions));
-
-            return Promise.resolve();
         }
     };
 })();
